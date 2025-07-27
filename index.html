@@ -4,18 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-    <!-- ▼▼▼ 您自己的PWA和图标代码 (已整理好格式) ▼▼▼ -->
+    <!-- 您的PWA和图标代码 (已修正并放置在正确位置) -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <!-- ▲▲▲ 替换完成 ▲▲▲ -->
 
     <title>EPhone</title>
     <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
 
-    <!-- 提示音播放器 -->
+    <!-- 唯一的提示音播放器 -->
     <audio id="notification-sound" src="https://files.catbox.moe/jqj037.mp3" preload="auto"></audio>
 
     <style>
@@ -15325,23 +15324,49 @@ document.getElementById('existing-categories-list').addEventListener('click', (e
         deleteCategory(categoryId);
     }
 });
-// ▲▲▲ 新代码粘贴结束 ▲▲▲
+
+    // ===================================================================
+    // 4. 初始化函数 init()
+    // ===================================================================
+    async function init() {
+
+        // 1. 请求通知权限 (已添加)
+        if ('Notification' in window && Notification.permission !== 'granted') {
+            Notification.requestPermission();
+        }
+
+        // 2. “解锁”音频播放的技巧 (已添加)
+        const unlockAudio = () => {
+            const notificationSound = document.getElementById('notification-sound');
+            if (notificationSound) {
+                notificationSound.play().catch(() => {});
+                notificationSound.pause();
+                notificationSound.currentTime = 0;
+            }
+            document.body.removeEventListener('click', unlockAudio);
+            document.body.removeEventListener('touchstart', unlockAudio);
+        };
+        document.body.addEventListener('click', unlockAudio);
+        document.body.addEventListener('touchstart', unlockAudio);
+
+        // ... (这里是 init() 函数原有的其他代码，保持不变) ...
 
         // ===================================================================
         // 5. 启动！
-            
-            showScreen('home-screen');
-        }
+        // ===================================================================
+        
+        showScreen('home-screen');
+    }
 
-        init();
-    });
+    init();
+});
 </script>
 
-<!-- ▼▼▼ 在这里粘贴你的代码 ▼▼▼ -->
+<!-- ▼▼▼ Service Worker注册脚本 (已移动到正确位置) ▼▼▼ -->
 <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
-}
+    }
 </script>
 <!-- ▲▲▲ 粘贴结束 ▲▲▲ -->
 
